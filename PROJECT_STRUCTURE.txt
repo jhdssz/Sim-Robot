@@ -1,0 +1,145 @@
+Sim-Robot/
+│
+├── 📄 package.xml                 # ROS包配置
+├── 📄 CMakeLists.txt              # CMake构建配置
+├── 📄 README.md                   # 项目主文档
+├── 📄 INSTALL.md                  # 安装指南
+├── 📄 QUICK_START.md              # 快速参考
+├── 📄 ARCHITECTURE.md             # 系统架构文档
+├── 📄 PROJECT_SUMMARY.md          # 项目总结
+├── 📄 start_simulation.sh         # 启动脚本
+├── 📄 check_project.sh            # 项目检查脚本
+│
+├── 📁 worlds/                     # Gazebo世界文件
+│   └── 📄 nursing_home.world      # 养老院环境
+│       ├── 前台区域
+│       ├── 101房间（床、床头柜、门）
+│       ├── 102房间（床、床头柜、门）
+│       ├── 走廊
+│       ├── 电梯
+│       └── 药品架
+│
+├── 📁 urdf/                       # 机器人模型
+│   └── 📄 dual_arm_mobile_robot.urdf
+│       ├── 四轮底盘
+│       ├── 左臂（肩、肘、腕、手爪）
+│       ├── 右臂（肩、肘、腕、手爪）
+│       └── Gazebo插件
+│
+├── 📁 launch/                     # ROS启动文件
+│   ├── 📄 nursing_home.launch     # 主启动文件
+│   │   ├── 加载Gazebo世界
+│   │   ├── 生成机器人
+│   │   ├── 启动导航
+│   │   └── 启动控制器
+│   │
+│   └── 📄 navigation.launch       # 导航启动文件
+│       ├── move_base
+│       ├── AMCL定位
+│       └── 地图服务器
+│
+├── 📁 scripts/                    # Python控制脚本
+│   ├── 📄 medicine_delivery_controller.py  # 主控制器 ⭐
+│   │   ├── 任务接收与解析
+│   │   ├── 导航控制
+│   │   ├── 机械臂控制
+│   │   ├── 抓取/放置动作
+│   │   └── 完整送药流程
+│   │
+│   ├── 📄 door_controller.py      # 门控制器
+│   │   ├── 开门/关门命令
+│   │   └── Gazebo关节控制
+│   │
+│   ├── 📄 elevator_controller.py  # 电梯控制器
+│   │   ├── 楼层切换
+│   │   └── 位置更新
+│   │
+│   ├── 📄 keyboard_control.py     # 键盘控制
+│   │   └── 手动遥控机器人
+│   │
+│   ├── 📄 test_delivery.py        # 自动测试
+│   │   └── 批量任务测试
+│   │
+│   └── 📄 test_arms.py            # 机械臂测试
+│       └── 关节运动测试
+│
+├── 📁 config/                     # 配置文件
+│   ├── 📄 costmap_common_params.yaml      # 代价地图公共参数
+│   ├── 📄 base_local_planner_params.yaml  # 局部规划器参数
+│   ├── 📄 global_costmap_params.yaml      # 全局代价地图
+│   ├── 📄 local_costmap_params.yaml       # 局部代价地图
+│   └── 📄 robot_controllers.yaml          # 控制器配置
+│
+└── 📁 maps/                       # 地图文件
+    └── 📄 nursing_home_map.yaml   # 地图配置
+
+
+═══════════════════════════════════════════════════════════
+
+系统工作流程：
+
+  用户命令
+     ↓
+  [medicine_delivery_controller.py] ← 主控制器
+     ↓
+     ├→ [move_base] ...................... 导航到目标
+     ├→ [door_controller.py] ............. 开门
+     ├→ [elevator_controller.py] ......... 电梯控制
+     └→ [关节控制] ...................... 机械臂动作
+     ↓
+  Gazebo仿真
+     ↓
+  任务完成
+
+═══════════════════════════════════════════════════════════
+
+关键话题 (ROS Topics):
+
+输入:
+  /medicine_delivery_task (String)  - 接收任务："药品名,房间号"
+
+输出:
+  /cmd_vel (Twist)                  - 底盘速度命令
+  /door_control (String)            - 门控制命令
+  /elevator_control (String)        - 电梯控制命令
+  /dual_arm_robot/*/command (Float64) - 关节控制
+
+状态:
+  /odom (Odometry)                  - 机器人位姿
+  /joint_states (JointState)        - 关节状态
+  /move_base/status (GoalStatusArray) - 导航状态
+
+═══════════════════════════════════════════════════════════
+
+机器人自由度 (DOF):
+
+  移动底盘: 2 DOF (x, θ)
+  左臂: 3 DOF (肩、肘、腕)
+  右臂: 3 DOF (肩、肘、腕)
+  ───────────────────
+  总计: 8 DOF
+
+═══════════════════════════════════════════════════════════
+
+环境坐标 (单位: 米):
+
+  前台 (Reception):        (2.0, 0.0)
+  药品架 (Medicine Shelf): (1.5, -0.8)
+  101房间 (Room 101):      (10.0, 5.0)
+  102房间 (Room 102):      (10.0, -5.0)
+  电梯 (Elevator):         (-5.0, 0.0)
+
+═══════════════════════════════════════════════════════════
+
+文件统计:
+
+  Python脚本:      6 个
+  Launch文件:      2 个
+  配置文件:        5 个
+  URDF模型:        1 个
+  World文件:       1 个
+  文档文件:        5 个
+  ─────────────────────
+  总计:           20+ 个文件
+
+═══════════════════════════════════════════════════════════

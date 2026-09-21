@@ -1,0 +1,936 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="dual_arm_mobile_robot">
+    <!-- 底盘 -->
+    <link name="base_link">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>20</mass>
+        <pose>0 0 0.1 0 0 0</pose>
+        <inertia>
+          <ixx>0.5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.7</iyy>
+          <iyz>0</iyz>
+          <izz>0.8</izz>
+        </inertia>
+      </inertial>
+      <visual name="base_visual">
+        <pose>0 0 0.1 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.6 0.4 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <collision name="base_collision">
+        <pose>0 0 0.1 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.6 0.4 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- 左前轮 -->
+    <link name="left_front_wheel">
+      <pose>0.2 0.25 0 0 0 0</pose>
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_front_wheel_visual">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_front_wheel_collision">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_front_wheel_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>left_front_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <!-- 右前轮 -->
+    <link name="right_front_wheel">
+      <pose>0.2 -0.25 0 0 0 0</pose>
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_front_wheel_visual">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_front_wheel_collision">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_front_wheel_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>right_front_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <!-- 左后轮 -->
+    <link name="left_rear_wheel">
+      <pose>-0.2 0.25 0 0 0 0</pose>
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_rear_wheel_visual">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_rear_wheel_collision">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_rear_wheel_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>left_rear_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <!-- 右后轮 -->
+    <link name="right_rear_wheel">
+      <pose>-0.2 -0.25 0 0 0 0</pose>
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_rear_wheel_visual">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_rear_wheel_collision">
+        <pose>0 0 0 1.5707 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_rear_wheel_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>right_rear_wheel</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <!-- 躯干 -->
+    <link name="torso">
+      <pose>0 0 0.2 0 0 0</pose>
+      <inertial>
+        <mass>10</mass>
+        <pose>0 0 0.3 0 0 0</pose>
+        <inertia>
+          <ixx>0.3</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.3</iyy>
+          <iyz>0</iyz>
+          <izz>0.1</izz>
+        </inertia>
+      </inertial>
+      <visual name="torso_visual">
+        <pose>0 0 0.3 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.6</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.8 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+        </material>
+      </visual>
+      <collision name="torso_collision">
+        <pose>0 0 0.3 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.6</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="torso_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>torso</child>
+    </joint>
+
+    <!-- LiDAR 激光雷达 -->
+    <link name="laser_link">
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <visual name="laser_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>0.04</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="laser_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>0.04</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <!-- GPU LiDAR 传感器 -->
+      <sensor name="laser_sensor" type="gpu_lidar">
+        <topic>scan</topic>
+        <update_rate>10</update_rate>
+        <gz:frame_id>laser_link</gz:frame_id>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.12</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+        <always_on>1</always_on>
+        <visualize>true</visualize>
+      </sensor>
+    </link>
+
+    <joint name="laser_joint" type="fixed">
+      <pose relative_to="base_link">0.25 0 0.15 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>laser_link</child>
+    </joint>
+
+    <!-- 左臂完整版本 -->
+    <link name="left_shoulder">
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0</iyz>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_shoulder_visual">
+        <geometry>
+          <sphere>
+            <radius>0.06</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_shoulder_collision">
+        <geometry>
+          <sphere>
+            <radius>0.06</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_shoulder_joint" type="revolute">
+      <pose relative_to="torso">0 0.2 0.5 0 0 0</pose>
+      <parent>torso</parent>
+      <child>left_shoulder</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+          <effort>50</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 左上臂 -->
+    <link name="left_upper_arm">
+      <inertial>
+        <mass>0.8</mass>
+        <pose>0 0 -0.15 0 0 0</pose>
+        <inertia>
+          <ixx>0.008</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.008</iyy>
+          <iyz>0</iyz>
+          <izz>0.0005</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_upper_arm_visual">
+        <pose>0 0 -0.15 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.3</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_upper_arm_collision">
+        <pose>0 0 -0.15 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.3</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_upper_arm_joint" type="revolute">
+      <pose relative_to="left_shoulder">0 0 0 0 0 0</pose>
+      <parent>left_shoulder</parent>
+      <child>left_upper_arm</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.14</lower>
+          <upper>3.14</upper>
+          <effort>50</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 左肘 -->
+    <link name="left_elbow">
+      <inertial>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_elbow_visual">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_elbow_collision">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_elbow_joint" type="revolute">
+      <pose relative_to="left_upper_arm">0 0 -0.3 0 0 0</pose>
+      <parent>left_upper_arm</parent>
+      <child>left_elbow</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>2.5</upper>
+          <effort>30</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 左前臂 -->
+    <link name="left_forearm">
+      <inertial>
+        <mass>0.5</mass>
+        <pose>0 0 -0.12 0 0 0</pose>
+        <inertia>
+          <ixx>0.0025</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0025</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_forearm_visual">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.24</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_forearm_collision">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.24</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_forearm_joint" type="fixed">
+      <pose relative_to="left_elbow">0 0 0 0 0 0</pose>
+      <parent>left_elbow</parent>
+      <child>left_forearm</child>
+    </joint>
+
+    <!-- 左手腕 -->
+    <link name="left_wrist">
+      <inertial>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002</iyy>
+          <iyz>0</iyz>
+          <izz>0.0002</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_wrist_visual">
+        <geometry>
+          <sphere>
+            <radius>0.04</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_wrist_collision">
+        <geometry>
+          <sphere>
+            <radius>0.04</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_wrist_joint" type="revolute">
+      <pose relative_to="left_forearm">0 0 -0.24 0 0 0</pose>
+      <parent>left_forearm</parent>
+      <child>left_wrist</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+          <effort>20</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 左手爪 -->
+    <link name="left_gripper">
+      <inertial>
+        <mass>0.2</mass>
+        <pose>0 0 -0.05 0 0 0</pose>
+        <inertia>
+          <ixx>0.0002</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002</iyy>
+          <iyz>0</iyz>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_gripper_visual">
+        <pose>0 0 -0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.06 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_gripper_collision">
+        <pose>0 0 -0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.06 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="left_gripper_joint" type="fixed">
+      <pose relative_to="left_wrist">0 0 0 0 0 0</pose>
+      <parent>left_wrist</parent>
+      <child>left_gripper</child>
+    </joint>
+
+    <!-- 右臂完整版本 -->
+    <link name="right_shoulder">
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0</iyz>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_shoulder_visual">
+        <geometry>
+          <sphere>
+            <radius>0.06</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_shoulder_collision">
+        <geometry>
+          <sphere>
+            <radius>0.06</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_shoulder_joint" type="revolute">
+      <pose relative_to="torso">0 -0.2 0.5 0 0 0</pose>
+      <parent>torso</parent>
+      <child>right_shoulder</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+          <effort>50</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 右上臂 -->
+    <link name="right_upper_arm">
+      <inertial>
+        <mass>0.8</mass>
+        <pose>0 0 -0.15 0 0 0</pose>
+        <inertia>
+          <ixx>0.008</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.008</iyy>
+          <iyz>0</iyz>
+          <izz>0.0005</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_upper_arm_visual">
+        <pose>0 0 -0.15 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.3</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_upper_arm_collision">
+        <pose>0 0 -0.15 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.3</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_upper_arm_joint" type="revolute">
+      <pose relative_to="right_shoulder">0 0 0 0 0 0</pose>
+      <parent>right_shoulder</parent>
+      <child>right_upper_arm</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.14</lower>
+          <upper>3.14</upper>
+          <effort>50</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 右肘 -->
+    <link name="right_elbow">
+      <inertial>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.0003</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0003</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_elbow_visual">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_elbow_collision">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_elbow_joint" type="revolute">
+      <pose relative_to="right_upper_arm">0 0 -0.3 0 0 0</pose>
+      <parent>right_upper_arm</parent>
+      <child>right_elbow</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>2.5</upper>
+          <effort>30</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 右前臂 -->
+    <link name="right_forearm">
+      <inertial>
+        <mass>0.5</mass>
+        <pose>0 0 -0.12 0 0 0</pose>
+        <inertia>
+          <ixx>0.0025</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0025</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_forearm_visual">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.24</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_forearm_collision">
+        <pose>0 0 -0.12 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03</radius>
+            <length>0.24</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_forearm_joint" type="fixed">
+      <pose relative_to="right_elbow">0 0 0 0 0 0</pose>
+      <parent>right_elbow</parent>
+      <child>right_forearm</child>
+    </joint>
+
+    <!-- 右手腕 -->
+    <link name="right_wrist">
+      <inertial>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002</iyy>
+          <iyz>0</iyz>
+          <izz>0.0002</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_wrist_visual">
+        <geometry>
+          <sphere>
+            <radius>0.04</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_wrist_collision">
+        <geometry>
+          <sphere>
+            <radius>0.04</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_wrist_joint" type="revolute">
+      <pose relative_to="right_forearm">0 0 -0.24 0 0 0</pose>
+      <parent>right_forearm</parent>
+      <child>right_wrist</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+          <effort>20</effort>
+          <velocity>1.0</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- 右手爪 -->
+    <link name="right_gripper">
+      <inertial>
+        <mass>0.2</mass>
+        <pose>0 0 -0.05 0 0 0</pose>
+        <inertia>
+          <ixx>0.0002</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002</iyy>
+          <iyz>0</iyz>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_gripper_visual">
+        <pose>0 0 -0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.06 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_gripper_collision">
+        <pose>0 0 -0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.06 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="right_gripper_joint" type="fixed">
+      <pose relative_to="right_wrist">0 0 0 0 0 0</pose>
+      <parent>right_wrist</parent>
+      <child>right_gripper</child>
+    </joint>
+
+    <!-- Gazebo 插件 -->
+    <!-- 差速驱动控制器 -->
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_front_wheel_joint</left_joint>
+      <right_joint>right_front_wheel_joint</right_joint>
+      <wheel_separation>0.5</wheel_separation>
+      <wheel_radius>0.1</wheel_radius>
+      <wheel_diameter>0.2</wheel_diameter>
+      <max_linear_acceleration>1.0</max_linear_acceleration>
+      <max_angular_acceleration>2.0</max_angular_acceleration>
+      <max_linear_velocity>0.5</max_linear_velocity>
+      <max_angular_velocity>1.0</max_angular_velocity>
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_link</child_frame_id>
+      <odom_publish_frequency>50</odom_publish_frequency>
+    </plugin>
+
+    <!-- Joint State Publisher -->
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+    </plugin>
+
+    <!-- Pose Publisher -->
+    <plugin filename="gz-sim-pose-publisher-system" name="gz::sim::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <publish_collision_pose>false</publish_collision_pose>
+      <publish_visual_pose>false</publish_visual_pose>
+      <publish_nested_model_pose>false</publish_nested_model_pose>
+    </plugin>
+
+  </model>
+</sdf>
