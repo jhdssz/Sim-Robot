@@ -29,6 +29,9 @@ install(PROGRAMS
   scripts/keyboard_control.py
   scripts/test_delivery.py
   scripts/test_arms.py
+  scripts/validate_robot.py
+  scripts/scan_self_filter.py
+  scripts/compare_scan_filter.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -78,6 +81,10 @@ install(DIRECTORY
 
 # 测试
 if(BUILD_TESTING)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_test(NAME scan_self_filter_unit
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scan_self_filter.py
+  )
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()

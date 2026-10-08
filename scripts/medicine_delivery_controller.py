@@ -32,10 +32,10 @@ class MedicineDeliveryController(Node):
 
         # 关节控制发布器
         self.joint_publishers = {}
-        joint_names = [
-            'left_shoulder_joint', 'left_elbow_joint', 'left_wrist_joint',
-            'right_shoulder_joint', 'right_elbow_joint', 'right_wrist_joint'
-        ]
+        joint_names = [f'{side}_{part}_joint'
+                       for side in ('left', 'right')
+                       for part in ('shoulder', 'upper_arm', 'elbow', 'forearm',
+                                    'wrist', 'gripper', 'finger_left', 'finger_right')]
         for joint in joint_names:
             topic = f'/dual_arm_robot/{joint}/command'
             self.joint_publishers[joint] = self.create_publisher(Float64, topic, 10)
@@ -119,11 +119,8 @@ class MedicineDeliveryController(Node):
             self.get_logger().error('导航到房间门口失败')
             return
 
-        # 4. 开门
-        self.current_state = 'opening_door'
-        self.get_logger().info('Step 4: 开门')
-        self.open_door(self.current_room)
-        time.sleep(3)
+        # 4. 两个房间入口暂时保持常开，保留开门方法供后续恢复。
+        self.get_logger().info('Step 4: 房间入口常开，跳过开门')
 
         # 5. 进入房间
         room_loc = f'room_{self.current_room}'
@@ -218,7 +215,7 @@ class MedicineDeliveryController(Node):
         self.move_joint('left_wrist_joint', -0.3, 2.0)
         time.sleep(2)
 
-        self.get_logger().info('✅ 药品已抓取')
+        self.get_logger().info('抓取姿态命令已发送；未验证物体接触或抓取成功')
 
     def place_medicine(self):
         """放置药品（右臂）"""
@@ -236,7 +233,7 @@ class MedicineDeliveryController(Node):
         self.move_joint('right_wrist_joint', 0.0, 1.0)
         time.sleep(1)
 
-        self.get_logger().info('✅ 药品已放置')
+        self.get_logger().info('放置姿态命令已发送；未验证物体释放成功')
 
     def move_joint(self, joint_name, position, duration):
         """移动单个关节"""

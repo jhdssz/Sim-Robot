@@ -14,8 +14,8 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 100.0
-    laser_min_range: -1.0
+    laser_max_range: 10.0
+    laser_min_range: 0.12
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 2000
@@ -37,10 +37,10 @@ amcl:
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
-    scan_topic: scan
+    scan_topic: /scan_filtered
     set_initial_pose: true
     initial_pose:
-      x: 0.0
+      x: -1.0
       y: 0.0
       z: 0.0
       yaw: 0.0
@@ -56,50 +56,6 @@ bt_navigator:
     enable_groot_monitoring: True
     groot_zmq_publisher_port: 1666
     groot_zmq_server_port: 1667
-    plugin_lib_names:
-    - nav2_compute_path_to_pose_action_bt_node
-    - nav2_compute_path_through_poses_action_bt_node
-    - nav2_smooth_path_action_bt_node
-    - nav2_follow_path_action_bt_node
-    - nav2_spin_action_bt_node
-    - nav2_wait_action_bt_node
-    - nav2_back_up_action_bt_node
-    - nav2_drive_on_heading_bt_node
-    - nav2_clear_costmap_service_bt_node
-    - nav2_is_stuck_condition_bt_node
-    - nav2_goal_reached_condition_bt_node
-    - nav2_goal_updated_condition_bt_node
-    - nav2_globally_updated_goal_condition_bt_node
-    - nav2_is_path_valid_condition_bt_node
-    - nav2_initial_pose_received_condition_bt_node
-    - nav2_reinitialize_global_localization_service_bt_node
-    - nav2_rate_controller_bt_node
-    - nav2_distance_controller_bt_node
-    - nav2_speed_controller_bt_node
-    - nav2_truncate_path_action_bt_node
-    - nav2_truncate_path_local_action_bt_node
-    - nav2_goal_updater_node_bt_node
-    - nav2_recovery_node_bt_node
-    - nav2_pipeline_sequence_bt_node
-    - nav2_round_robin_node_bt_node
-    - nav2_transform_available_condition_bt_node
-    - nav2_time_expired_condition_bt_node
-    - nav2_path_expiring_timer_condition
-    - nav2_distance_traveled_condition_bt_node
-    - nav2_single_trigger_bt_node
-    - nav2_is_battery_low_condition_bt_node
-    - nav2_navigate_through_poses_action_bt_node
-    - nav2_navigate_to_pose_action_bt_node
-    - nav2_remove_passed_goals_action_bt_node
-    - nav2_planner_selector_bt_node
-    - nav2_controller_selector_bt_node
-    - nav2_goal_checker_selector_bt_node
-    - nav2_controller_cancel_bt_node
-    - nav2_path_longer_on_approach_bt_node
-    - nav2_wait_cancel_bt_node
-    - nav2_spin_cancel_bt_node
-    - nav2_back_up_cancel_bt_node
-    - nav2_drive_on_heading_cancel_bt_node
 
 controller_server:
   ros__parameters:
@@ -109,7 +65,7 @@ controller_server:
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
-    progress_checker_plugin: "progress_checker"
+    progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"]
     controller_plugins: ["FollowPath"]
 
@@ -176,24 +132,19 @@ local_costmap:
       width: 6
       height: 6
       resolution: 0.05
-      robot_radius: 0.22
-      plugins: ["voxel_layer", "inflation_layer"]
+      footprint: "[[0.32, 0.40], [0.32, -0.40], [-0.32, -0.40], [-0.32, 0.40]]"
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
-      voxel_layer:
-        plugin: "nav2_costmap_2d::VoxelLayer"
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
         max_obstacle_height: 2.0
-        mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_filtered
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -203,6 +154,7 @@ local_costmap:
           obstacle_max_range: 2.5
           obstacle_min_range: 0.0
       static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       always_send_full_costmap: True
 
@@ -214,7 +166,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
-      robot_radius: 0.22
+      footprint: "[[0.32, 0.40], [0.32, -0.40], [-0.32, -0.40], [-0.32, 0.40]]"
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -223,7 +175,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_filtered
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -350,7 +302,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "/scan"
+      topic: "/scan_filtered"
       min_height: 0.05
       max_height: 2.0
       enabled: True
@@ -360,6 +312,52 @@ lifecycle_manager_navigation:
     use_sim_time: True
     autostart: True
     node_names: ['controller_server', 'smoother_server', 'planner_server', 'behavior_server', 'bt_navigator', 'waypoint_follower', 'velocity_smoother']
+    
+# docking_server的配置，因为暂时用不到先给禁用了，不然启动会报错
+docking_server:
+  ros__parameters:
+    use_sim_time: True
+
+    controller_frequency: 50.0
+    initial_perception_timeout: 5.0
+    wait_charge_timeout: 5.0
+    dock_approach_timeout: 30.0
+
+    undock_linear_tolerance: 0.05
+    undock_angular_tolerance: 0.1
+    max_retries: 3
+
+    base_frame: "base_link"
+    fixed_frame: "odom"
+    dock_prestaging_tolerance: 0.5
+
+    # 只为了满足 Nav2 Jazzy 当前 navigation_launch.py 的启动要求。
+    # 目前项目不实际使用自动充电对接。
+    dock_plugins: ["simple_charging_dock"]
+
+    simple_charging_dock:
+      plugin: "opennav_docking::SimpleChargingDock"
+      docking_threshold: 0.05
+      staging_x_offset: -0.7
+
+      # 当前项目没有充电桩视觉检测和 BatteryState，
+      # 所以全部关闭。
+      use_external_detection_pose: false
+      use_battery_status: false
+      use_stall_detection: false
+
+    controller:
+      k_phi: 3.0
+      k_delta: 2.0
+      v_linear_min: 0.15
+      v_linear_max: 0.15
+      use_collision_detection: true
+      costmap_topic: "local_costmap/costmap_raw"
+      footprint_topic: "local_costmap/published_footprint"
+      transform_tolerance: 0.1
+      projection_time: 5.0
+      simulation_step: 0.1
+      dock_collision_threshold: 0.3
 
 lifecycle_manager_localization:
   ros__parameters:

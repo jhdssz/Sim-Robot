@@ -250,48 +250,6 @@
       </link>
     </model>
 
-    <!-- 门101 -->
-    <model name="door_101">
-      <pose>7.5 2.5 0 0 0 1.57</pose>
-      <link name="frame">
-        <pose>0 0 1 0 0 0</pose>
-        <collision name="collision"><geometry><box><size>0.1 1.2 2.2</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.1 1.2 2.2</size></box></geometry>
-          <material>
-            <ambient>0.7 0.5 0.3 1</ambient>
-            <diffuse>0.8 0.6 0.4 1</diffuse>
-            <specular>0.3 0.3 0.3 1</specular>
-          </material>
-        </visual>
-      </link>
-      <link name="door_panel">
-        <pose>0 -0.5 1 0 0 0</pose>
-        <inertial>
-          <mass>5</mass>
-          <inertia><ixx>0.5</ixx><iyy>0.5</iyy><izz>0.5</izz></inertia>
-        </inertial>
-        <collision name="collision"><geometry><box><size>0.05 1 2</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.05 1 2</size></box></geometry>
-          <material>
-            <ambient>0.85 0.65 0.4 1</ambient>
-            <diffuse>0.95 0.75 0.5 1</diffuse>
-            <specular>0.4 0.4 0.4 1</specular>
-          </material>
-        </visual>
-      </link>
-      <joint name="door_hinge" type="revolute">
-        <parent>frame</parent>
-        <child>door_panel</child>
-        <pose>0 0.5 0 0 0 0</pose>
-        <axis>
-          <xyz>0 0 1</xyz>
-          <limit>
-            <lower>0</lower>
-            <upper>1.57</upper>
-          </limit>
-        </axis>
-      </joint>
-    </model>
 
     <!-- 房间102 -->
     <model name="room_102">
@@ -365,45 +323,6 @@
       </link>
     </model>
 
-    <!-- 门102 -->
-    <model name="door_102">
-      <pose>7.5 -2.5 0 0 0 1.57</pose>
-      <link name="frame">
-        <pose>0 0 1 0 0 0</pose>
-        <collision name="collision"><geometry><box><size>0.1 1.2 2.2</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.1 1.2 2.2</size></box></geometry>
-          <material>
-            <ambient>0.7 0.5 0.3 1</ambient>
-            <diffuse>0.8 0.6 0.4 1</diffuse>
-            <specular>0.3 0.3 0.3 1</specular>
-          </material>
-        </visual>
-      </link>
-      <link name="door_panel">
-        <pose>0 -0.5 1 0 0 0</pose>
-        <inertial>
-          <mass>5</mass>
-          <inertia><ixx>0.5</ixx><iyy>0.5</iyy><izz>0.5</izz></inertia>
-        </inertial>
-        <collision name="collision"><geometry><box><size>0.05 1 2</size></box></geometry></collision>
-        <visual name="visual"><geometry><box><size>0.05 1 2</size></box></geometry>
-          <material>
-            <ambient>0.85 0.65 0.4 1</ambient>
-            <diffuse>0.95 0.75 0.5 1</diffuse>
-            <specular>0.4 0.4 0.4 1</specular>
-          </material>
-        </visual>
-      </link>
-      <joint name="door_hinge" type="revolute">
-        <parent>frame</parent>
-        <child>door_panel</child>
-        <pose>0 0.5 0 0 0 0</pose>
-        <axis>
-          <xyz>0 0 1</xyz>
-          <limit><lower>0</lower><upper>1.57</upper></limit>
-        </axis>
-      </joint>
-    </model>
 
     <!-- 电梯井 -->
     <model name="elevator_shaft">

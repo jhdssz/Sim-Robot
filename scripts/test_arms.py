@@ -1,180 +1,83 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-手臂测试脚本 - 测试机器人双臂的各个关节
-"""
+"""Small, sequential joint smoke test with measured joint-state feedback."""
+import time
 
 import rclpy
 from rclpy.node import Node
+from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
-import time
+
+PARTS = ('shoulder', 'upper_arm', 'elbow', 'forearm', 'wrist', 'gripper',
+         'finger_left', 'finger_right')
+
 
 class ArmTester(Node):
     def __init__(self):
         super().__init__('arm_tester')
-
-        # 创建关节控制发布器
-        self.joint_pubs = {
-            'left_shoulder': self.create_publisher(Float64, '/dual_arm_robot/left_shoulder_joint/command', 10),
-            'left_elbow': self.create_publisher(Float64, '/dual_arm_robot/left_elbow_joint/command', 10),
-            'left_wrist': self.create_publisher(Float64, '/dual_arm_robot/left_wrist_joint/command', 10),
-            'right_shoulder': self.create_publisher(Float64, '/dual_arm_robot/right_shoulder_joint/command', 10),
-            'right_elbow': self.create_publisher(Float64, '/dual_arm_robot/right_elbow_joint/command', 10),
-            'right_wrist': self.create_publisher(Float64, '/dual_arm_robot/right_wrist_joint/command', 10),
+        self.positions = {}
+        self.received = {}
+        self.pubs = {
+            f'{side}_{part}_joint': self.create_publisher(
+                Float64, f'/dual_arm_robot/{side}_{part}_joint/command', 10)
+            for side in ('left', 'right') for part in PARTS
         }
+        self.subscription = self.create_subscription(
+            JointState, '/joint_states', self.on_state, 10)
 
-        time.sleep(1)  # 等待发布器初始化
+    def on_state(self, msg):
+        now = time.monotonic()
+        for name, position in zip(msg.name, msg.position):
+            self.positions[name] = position
+            self.received[name] = now
 
-    def move_joint(self, joint_name, angle):
-        """移动单个关节到指定角度"""
-        if joint_name in self.joint_pubs:
-            self.get_logger().info(f"移动 {joint_name} 到 {angle} 弧度")
-            msg = Float64()
-            msg.data = angle
-            self.joint_pubs[joint_name].publish(msg)
-        else:
-            self.get_logger().warn(f"未知关节: {joint_name}")
+    def move(self, name, target, timeout=8.0):
+        start = time.monotonic()
+        tolerance = 0.003 if 'finger' in name else 0.05
+        stable = 0
+        while rclpy.ok() and time.monotonic() - start < timeout:
+            self.pubs[name].publish(Float64(data=float(target)))
+            rclpy.spin_once(self, timeout_sec=0.1)
+            fresh = self.received.get(name, 0) > start
+            fresh = fresh and time.monotonic()-self.received[name] < 0.5
+            if fresh and abs(self.positions[name]-target) < tolerance:
+                stable += 1
+                if stable >= 5:
+                    self.get_logger().info(f'{name}: measured target {target:.3f}')
+                    return
+            else:
+                stable = 0
+        raise RuntimeError(f'{name}: no fresh feedback at target {target}; measured {self.positions.get(name)}')
 
-    def reset_all(self):
-        """重置所有关节到零位"""
-        self.get_logger().info("重置所有关节...")
-        for joint_name in self.joint_pubs.keys():
-            msg = Float64()
-            msg.data = 0.0
-            self.joint_pubs[joint_name].publish(msg)
-        time.sleep(2)
+    def run(self):
+        deadline = time.monotonic() + 10
+        while not set(self.pubs).issubset(self.positions) and time.monotonic() < deadline:
+            rclpy.spin_once(self, timeout_sec=0.1)
+        missing = set(self.pubs)-set(self.positions)
+        if missing:
+            raise RuntimeError(f'Missing Gazebo joint feedback: {sorted(missing)}')
+        for name in self.pubs:
+            self.move(name, 0.0)
+        for name in self.pubs:
+            target = 0.015 if 'finger' in name else 0.15
+            # Shoulder roll moves away from the torso on each side.
+            if name == 'right_upper_arm_joint':
+                target = -target
+            self.move(name, target)
+            self.move(name, 0.0)
 
-    def test_left_arm(self):
-        """测试左臂"""
-        self.get_logger().info("\n=== 测试左臂 ===")
-
-        self.get_logger().info("测试左肩...")
-        self.move_joint('left_shoulder', 0.5)
-        time.sleep(2)
-        self.move_joint('left_shoulder', -0.5)
-        time.sleep(2)
-        self.move_joint('left_shoulder', 0.0)
-        time.sleep(1)
-
-        self.get_logger().info("测试左肘...")
-        self.move_joint('left_elbow', 1.5)
-        time.sleep(2)
-        self.move_joint('left_elbow', 0.5)
-        time.sleep(2)
-        self.move_joint('left_elbow', 0.0)
-        time.sleep(1)
-
-        self.get_logger().info("测试左手腕...")
-        self.move_joint('left_wrist', 1.0)
-        time.sleep(2)
-        self.move_joint('left_wrist', -1.0)
-        time.sleep(2)
-        self.move_joint('left_wrist', 0.0)
-        time.sleep(1)
-
-    def test_right_arm(self):
-        """测试右臂"""
-        self.get_logger().info("\n=== 测试右臂 ===")
-
-        self.get_logger().info("测试右肩...")
-        self.move_joint('right_shoulder', 0.5)
-        time.sleep(2)
-        self.move_joint('right_shoulder', -0.5)
-        time.sleep(2)
-        self.move_joint('right_shoulder', 0.0)
-        time.sleep(1)
-
-        self.get_logger().info("测试右肘...")
-        self.move_joint('right_elbow', 1.5)
-        time.sleep(2)
-        self.move_joint('right_elbow', 0.5)
-        time.sleep(2)
-        self.move_joint('right_elbow', 0.0)
-        time.sleep(1)
-
-        self.get_logger().info("测试右手腕...")
-        self.move_joint('right_wrist', 1.0)
-        time.sleep(2)
-        self.move_joint('right_wrist', -1.0)
-        time.sleep(2)
-        self.move_joint('right_wrist', 0.0)
-        time.sleep(1)
-
-    def test_pick_motion(self):
-        """测试抓取动作"""
-        self.get_logger().info("\n=== 测试抓取动作 ===")
-
-        # 伸展右臂
-        self.move_joint('right_shoulder', 0.5)
-        time.sleep(1)
-        self.move_joint('right_elbow', 1.2)
-        time.sleep(1)
-        self.move_joint('right_wrist', -0.3)
-        time.sleep(2)
-
-        self.get_logger().info("抓取位置保持...")
-        time.sleep(2)
-
-        # 收回
-        self.reset_all()
-
-    def test_place_motion(self):
-        """测试放置动作"""
-        self.get_logger().info("\n=== 测试放置动作 ===")
-
-        # 移动到放置位置
-        self.move_joint('right_shoulder', 0.3)
-        time.sleep(1)
-        self.move_joint('right_elbow', 0.8)
-        time.sleep(1)
-        self.move_joint('right_wrist', -0.5)
-        time.sleep(2)
-
-        self.get_logger().info("放置位置保持...")
-        time.sleep(2)
-
-        # 收回
-        self.reset_all()
-
-    def run_full_test(self):
-        """运行完整测试"""
-        self.get_logger().info("========================================")
-        self.get_logger().info("开始机械臂完整测试")
-        self.get_logger().info("========================================")
-
-        self.reset_all()
-        time.sleep(2)
-
-        self.test_left_arm()
-        time.sleep(2)
-
-        self.test_right_arm()
-        time.sleep(2)
-
-        self.test_pick_motion()
-        time.sleep(2)
-
-        self.test_place_motion()
-        time.sleep(2)
-
-        self.reset_all()
-
-        self.get_logger().info("========================================")
-        self.get_logger().info("测试完成！")
-        self.get_logger().info("========================================")
 
 def main(args=None):
     rclpy.init(args=args)
     tester = ArmTester()
-
     try:
-        tester.run_full_test()
-    except KeyboardInterrupt:
-        pass
+        tester.run()
     finally:
+        # Request rest even if a test failed; this is not an emergency stop.
+        for pub in tester.pubs.values():
+            pub.publish(Float64(data=0.0))
         tester.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

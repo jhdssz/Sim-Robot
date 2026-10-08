@@ -3,7 +3,8 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -45,8 +46,9 @@ def generate_launch_description():
         arguments=[
             '-name', 'dual_arm_robot',
             '-file', sdf_file,
-            '-x', '0.5',
+            '-x', '-1.0',
             '-y', '0.0',
+            '-Y', '0.0',
             '-z', '0.2'
         ],
         output='screen'
@@ -64,44 +66,26 @@ def generate_launch_description():
         }]
     )
 
-    # ROS-Gazebo Bridge
-    # Clock bridge
-    clock_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-        output='screen'
+    # Explicit one-way bridges; only DiffDrive owns odom -> base_link TF.
+    robot_bridge = Node(
+        package='ros_gz_bridge', executable='parameter_bridge',
+        parameters=[{'config_file': os.path.join(pkg_share, 'config', 'ros_gz_bridge.yaml'),
+                     'use_sim_time': True}], output='screen'
     )
 
-    # cmd_vel bridge (ROS -> Gazebo only)
-    cmd_vel_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist'],
-        output='screen'
-    )
-
-    # odom bridge (Gazebo -> ROS)
-    odom_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry'],
-        output='screen'
-    )
-
-    # scan bridge (Gazebo -> ROS)
-    scan_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'],
-        output='screen'
+    # Always keep the raw bridge and filter independent of Nav2 startup.
+    scan_self_filter = Node(
+        package=pkg_name, executable='scan_self_filter.py',
+        name='scan_self_filter', output='screen',
+        parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}]
     )
 
     # 导航启动
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'navigation.launch.py')
-        )
+        ),
+        condition=IfCondition(LaunchConfiguration('navigation'))
     )
 
     # 送药控制器
@@ -110,17 +94,11 @@ def generate_launch_description():
         executable='medicine_delivery_controller.py',
         name='medicine_delivery_controller',
         output='screen',
-        parameters=[{'use_sim_time': True}]
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('task_controllers'))
     )
 
-    # 门控制器
-    door_controller = Node(
-        package=pkg_name,
-        executable='door_controller.py',
-        name='door_controller',
-        output='screen',
-        parameters=[{'use_sim_time': True}]
-    )
+    # 101/102 entrances are temporarily open; keep door_controller.py dormant.
 
     # 电梯控制器
     elevator_controller = Node(
@@ -128,19 +106,22 @@ def generate_launch_description():
         executable='elevator_controller.py',
         name='elevator_controller',
         output='screen',
-        parameters=[{'use_sim_time': True}]
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('task_controllers'))
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='true'),
+        DeclareLaunchArgument('navigation', default_value='false',
+                              description='Enable Nav2 after model/sensor validation'),
+        DeclareLaunchArgument('task_controllers', default_value='false',
+                              description='Enable delivery, door and elevator demos'),
         gz_sim,
-        clock_bridge,
-        cmd_vel_bridge,
-        odom_bridge,
-        scan_bridge,
+        robot_bridge,
+        scan_self_filter,
         robot_state_publisher,
         spawn_robot,
         navigation,
         medicine_delivery_controller,
-        door_controller,
         elevator_controller
     ])

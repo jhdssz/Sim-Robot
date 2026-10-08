@@ -108,7 +108,7 @@ Write-Host "验证 6: 检查机器人可见性" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host "请检查 Gazebo GUI："
 Write-Host "1. 机器人是否可见" -ForegroundColor White
-Write-Host "2. 位置是否正确: x=0.5, y=0, z=0.2" -ForegroundColor White
+Write-Host "2. 位置是否正确: x=-1.0, y=0, z=0.2" -ForegroundColor White
 Write-Host "3. 所有部件是否显示正常（底盘、轮子、LiDAR、手臂）" -ForegroundColor White
 
 Write-Host ""
