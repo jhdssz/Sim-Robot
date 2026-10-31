@@ -1,0 +1,16 @@
+[
+  {
+    "ros_topic_name": "/experiment/ground_truth",
+    "gz_topic_name": "/model/dual_arm_robot/pose",
+    "ros_type_name": "tf2_msgs/msg/TFMessage",
+    "gz_type_name": "gz.msgs.Pose_V",
+    "direction": "GZ_TO_ROS"
+  },
+  {
+    "ros_topic_name": "/experiment/contacts",
+    "gz_topic_name": "/experiment/contacts",
+    "ros_type_name": "ros_gz_interfaces/msg/Contacts",
+    "gz_type_name": "gz.msgs.Contacts",
+    "direction": "GZ_TO_ROS"
+  }
+]

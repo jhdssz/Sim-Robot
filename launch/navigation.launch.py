@@ -4,7 +4,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
@@ -25,7 +26,7 @@ def generate_launch_description():
         launch_arguments={
             'map': map_file,
             'yaml_filename': map_file,
-            'params_file': nav2_params_file,
+            'params_file': LaunchConfiguration('params_file'),
             'use_sim_time': 'True',
             'autostart': 'True',
             'use_composition': 'False',
@@ -34,5 +35,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('params_file', default_value=nav2_params_file),
         nav2_bringup
     ])

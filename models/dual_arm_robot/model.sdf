@@ -218,22 +218,21 @@
       <pose>0 0 0.2 0 0 0</pose>
       <inertial>
         <mass>10</mass>
-        <pose>0 0 0.3268 0 0 0</pose>
+        <pose>0 0 0.496966292135 0 0 0</pose>
         <inertia>
-          <ixx>0.350474058333</ixx>
-          <iyy>0.350474058333</iyy>
-          <izz>0.15488625</izz>
+          <ixx>0.631968437452</ixx>
+          <iyy>0.631968437452</iyy>
+          <izz>0.150203339576</izz>
           <ixy>0</ixy>
           <ixz>0</ixz>
           <iyz>0</iyz>
         </inertia>
       </inertial>
-      <!-- Open scan bay: base z=0.22..0.32; columns retain structural support. -->
       <visual name="torso_upper_visual">
-        <pose>0 0 0.36 0 0 0</pose>
+        <pose>0 0 0.51 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.3 0.3 0.48</size>
+            <size>0.3 0.3 0.78</size>
           </box>
         </geometry>
         <material>
@@ -242,10 +241,10 @@
         </material>
       </visual>
       <collision name="torso_upper_collision">
-        <pose>0 0 0.36 0 0 0</pose>
+        <pose>0 0 0.51 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.3 0.3 0.48</size>
+            <size>0.3 0.3 0.78</size>
           </box>
         </geometry>
       </collision>
@@ -456,7 +455,7 @@
       </collision>
     </link>
     <joint name="left_shoulder_joint" type="revolute">
-      <pose relative_to="torso">0 0.32 0.5 0 0 0</pose>
+      <pose relative_to="torso">0 0.32 0.8 0 0 0</pose>
       <parent>torso</parent>
       <child>left_shoulder</child>
       <axis>
@@ -775,7 +774,7 @@
       </collision>
     </link>
     <joint name="right_shoulder_joint" type="revolute">
-      <pose relative_to="torso">0 -0.32 0.5 0 0 0</pose>
+      <pose relative_to="torso">0 -0.32 0.8 0 0 0</pose>
       <parent>torso</parent>
       <child>right_shoulder</child>
       <axis>
@@ -1373,7 +1372,7 @@
       </sensor>
     </link>
     <joint name="camera_link_joint" type="fixed">
-      <pose relative_to="torso">0.20 0 0.65 0 0 0</pose>
+      <pose relative_to="torso">0.20 0 0.95 0 0 0</pose>
       <parent>torso</parent>
       <child>camera_link</child>
     </joint>

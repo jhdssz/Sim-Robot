@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Filter known home-pose self echoes; this cannot recover occluded returns."""
+"""Filter only the four scan-bay posts. Raised home-pose arms no longer require side masks."""
 from copy import deepcopy
 import math
 
@@ -7,10 +7,8 @@ INPUT_TOPIC = '/scan'
 OUTPUT_TOPIC = '/scan_filtered'
 SELF_FILTER_SECTORS = (
     (-142.0, -129.0, 0.22),
-    (-98.0, -82.0, 0.34),
     (-51.0, -39.0, 0.22),
     (39.0, 51.0, 0.22),
-    (82.0, 98.0, 0.34),
     (129.0, 142.0, 0.22),
 )
 
@@ -70,7 +68,7 @@ def main(args=None):
             self.subscription = self.create_subscription(
                 LaserScan, INPUT_TOPIC, self.on_scan, sensor_qos())
             self.get_logger().info(
-                'Filtering /scan -> /scan_filtered using six fixed home-pose sectors')
+                'Filtering /scan -> /scan_filtered using four scan-bay post sectors; former arm side masks removed')
 
         def on_scan(self, scan):
             self.publisher.publish(filter_scan(scan))

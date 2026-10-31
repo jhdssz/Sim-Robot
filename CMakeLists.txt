@@ -32,6 +32,10 @@ install(PROGRAMS
   scripts/validate_robot.py
   scripts/scan_self_filter.py
   scripts/compare_scan_filter.py
+  scripts/record_narrow_navigation.py
+  scripts/experiment_geometry.py
+  scripts/capture_nav_diagnostics.py
+  scripts/launch_rviz_checked.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -84,6 +88,9 @@ if(BUILD_TESTING)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(NAME scan_self_filter_unit
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scan_self_filter.py
+  )
+  add_test(NAME model_scan_clearance_unit
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_model_scan_clearance.py
   )
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()

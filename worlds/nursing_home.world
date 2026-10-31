@@ -420,5 +420,25 @@
       </link>
     </model>
 
+    <!-- Front-of-cabinet placement following the boxed screenshot region.
+         Cabinet south face y=-1.0; obstacle north face y=-1.76: 0.76 m gap.
+         Matches full home-pose collision width including BOTH arms; no physical clearance. -->
+    <model name="narrow_gap_obstacle">
+      <static>true</static>
+      <pose>1.4 -2.26 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.8 1.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.8 1.0 1.0</size></box></geometry>
+          <material>
+            <ambient>1.0 0.12 0.02 1</ambient>
+            <diffuse>1.0 0.18 0.03 1</diffuse>
+            <specular>0.15 0.15 0.15 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
   </world>
 </sdf>

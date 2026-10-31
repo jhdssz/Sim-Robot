@@ -17,9 +17,9 @@ def generate_launch_description():
     pkg_share = get_package_share_directory(pkg_name)
 
     # 文件路径
-    world_file = os.path.join(pkg_share, 'worlds', 'nursing_home.world')
+    world_file = LaunchConfiguration('world')
     urdf_file = os.path.join(pkg_share, 'urdf', 'dual_arm_mobile_robot.urdf')
-    sdf_file = os.path.join(pkg_share, 'models', 'dual_arm_robot', 'model.sdf')
+    sdf_file = LaunchConfiguration('robot_sdf')
 
     # 处理 URDF
     robot_description = xacro.process_file(urdf_file).toxml()
@@ -34,7 +34,7 @@ def generate_launch_description():
             ])
         ]),
         launch_arguments={
-            'gz_args': f'-r {world_file}',
+            'gz_args': ['-r ', world_file],
             'on_exit_shutdown': 'True'
         }.items()
     )
@@ -46,7 +46,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'dual_arm_robot',
             '-file', sdf_file,
-            '-x', '-1.0',
+            '-x', '-2.0',
             '-y', '0.0',
             '-Y', '0.0',
             '-z', '0.2'
@@ -85,6 +85,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'navigation.launch.py')
         ),
+        launch_arguments={'params_file': LaunchConfiguration('params_file')}.items(),
         condition=IfCondition(LaunchConfiguration('navigation'))
     )
 
@@ -112,6 +113,9 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='true'),
+        DeclareLaunchArgument('robot_sdf', default_value=os.path.join(pkg_share, 'models', 'dual_arm_robot', 'model.sdf')),
+        DeclareLaunchArgument('world', default_value=os.path.join(pkg_share, 'worlds', 'nursing_home.world')),
+        DeclareLaunchArgument('params_file', default_value=os.path.join(pkg_share, 'config', 'nav2_params.yaml')),
         DeclareLaunchArgument('navigation', default_value='false',
                               description='Enable Nav2 after model/sensor validation'),
         DeclareLaunchArgument('task_controllers', default_value='false',

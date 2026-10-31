@@ -78,8 +78,10 @@ echo "启动 Gazebo Harmonic 仿真环境..."
 echo "=========================================="
 echo ""
 
-# 启动主仿真
-ros2 launch nursing_home_sim nursing_home.launch.py
+# 启动主仿真：明确使用当前项目源世界，避免旧安装资源。
+SIM_PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+echo "World: $SIM_PROJECT_ROOT/worlds/nursing_home.world"
+ros2 launch nursing_home_sim nursing_home.launch.py world:="$SIM_PROJECT_ROOT/worlds/nursing_home.world" "$@"
 
 echo ""
 echo "=========================================="

@@ -25,9 +25,8 @@ def validate_scan_filter(root, by_topic):
     assert constants['INPUT_TOPIC'] == '/scan'
     assert constants['OUTPUT_TOPIC'] == '/scan_filtered'
     assert constants['SELF_FILTER_SECTORS'] == (
-        (-142.0, -129.0, 0.22), (-98.0, -82.0, 0.34),
-        (-51.0, -39.0, 0.22), (39.0, 51.0, 0.22),
-        (82.0, 98.0, 0.34), (129.0, 142.0, 0.22))
+        (-142.0, -129.0, 0.22), (-51.0, -39.0, 0.22),
+        (39.0, 51.0, 0.22), (129.0, 142.0, 0.22))
     for method, constant in (('create_subscription', 'INPUT_TOPIC'),
                              ('create_publisher', 'OUTPUT_TOPIC')):
         calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
@@ -77,7 +76,7 @@ def validate_scan_filter(root, by_topic):
     assert 'scripts/scan_self_filter.py' in install_programs
     assert 'scripts/compare_scan_filter.py' in install_programs
     assert (root / 'tests/test_scan_self_filter.py').is_file()
-    print('PASS (static only): six self-filter sectors, SensorData QoS, raw bridge,')
+    print('PASS (static only): four scan-bay post sectors; former arm masks removed, SensorData QoS, raw bridge,')
     print('      four Nav2 inputs, unconditional filter launch, executable installation.')
 
 
@@ -100,11 +99,11 @@ def validate_initial_pose(root):
     amcl = nav['amcl']['ros__parameters']
     pose = amcl['initial_pose']
     assert amcl['set_initial_pose'] is True
-    assert spawn_xy == (float(pose['x']), float(pose['y'])) == (-1.0, 0.0), 'Spawn/AMCL initial x/y mismatch'
+    assert spawn_xy == (float(pose['x']), float(pose['y'])) == (-2.0, 0.0), 'Spawn/AMCL initial x/y mismatch'
     assert coordinate('-Y') == float(pose['yaw']) == 0.0, 'Initial yaw must be zero'
     assert coordinate('-z') == 0.2, 'Preserve original Gazebo spawn z=0.2'
     assert float(pose['z']) == 0.0, 'AMCL initial z must be zero'
-    print('PASS (static): spawn and AMCL x/y=(-1.0, 0.0), yaw=0; spawn z=0.2 preserved.')
+    print('PASS (static): spawn and AMCL x/y=(-2.0, 0.0), yaw=0; spawn z=0.2 preserved.')
 
 
 def validate(root):
@@ -189,6 +188,7 @@ def validate(root):
     for side, sign in (('left',1),('right',-1)):
         pose = [float(x) for x in sjoints[side+'_shoulder_joint'].findtext('pose').split()]
         assert pose[1] == sign*.32 and abs(pose[1])-.06 > .15
+        assert pose[2] == .8, 'Raised shoulder mount must remain at torso z=0.8'
     laser_xyz = [float(x) for x in sjoints['laser_joint'].findtext('pose').split()[:3]]
     assert laser_xyz == [0.0, 0.0, 0.27], 'LiDAR scan-bay placement changed'
     # Housing z=0.25..0.29 lies within the bay z=0.22..0.32.

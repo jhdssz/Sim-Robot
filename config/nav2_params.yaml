@@ -40,7 +40,7 @@ amcl:
     scan_topic: /scan_filtered
     set_initial_pose: true
     initial_pose:
-      x: -1.0
+      x: -2.0
       y: 0.0
       z: 0.0
       yaw: 0.0
@@ -108,8 +108,8 @@ controller_server:
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.02
+      critics: ["RotateToGoal", "Oscillation", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      ObstacleFootprint.scale: 0.02
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
       GoalAlign.scale: 24.0
@@ -289,7 +289,7 @@ collision_monitor:
     polygons: ["FootprintApproach"]
     FootprintApproach:
       type: "polygon"
-      points: "[[0.4, 0.3], [0.4, -0.3], [-0.4, -0.3], [-0.4, 0.3]]"
+      points: "[[0.32, 0.40], [0.32, -0.40], [-0.32, -0.40], [-0.32, 0.40]]"
       action_type: "approach"
       min_points: 4
       visualize: True

@@ -134,24 +134,23 @@
   <!-- 躯干 -->
   <link name="torso">
     <inertial>
-      <origin xyz="0 0 0.3268" rpy="0 0 0" />
+      <origin xyz="0 0 0.496966292135" rpy="0 0 0" />
       <mass value="10" />
-      <inertia ixx="0.350474058333" iyy="0.350474058333" izz="0.15488625" ixy="0" ixz="0" iyz="0" />
+      <inertia ixx="0.631968437452" iyy="0.631968437452" izz="0.150203339576" ixy="0" ixz="0" iyz="0" />
     </inertial>
-    <!-- Open scan bay: base z=0.22..0.32; matches SDF collision and inertia. -->
     <visual>
-      <origin xyz="0 0 0.36" rpy="0 0 0" />
+      <origin xyz="0 0 0.51" rpy="0 0 0" />
       <geometry>
-        <box size="0.3 0.3 0.48" />
+        <box size="0.3 0.3 0.78" />
       </geometry>
       <material name="torso_color">
         <color rgba="0.8 0.8 0.8 1" />
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0.36" rpy="0 0 0" />
+      <origin xyz="0 0 0.51" rpy="0 0 0" />
       <geometry>
-        <box size="0.3 0.3 0.48" />
+        <box size="0.3 0.3 0.78" />
       </geometry>
     </collision>
     <visual>
@@ -252,7 +251,7 @@
   <joint name="left_shoulder_joint" type="revolute">
     <parent link="torso" />
     <child link="left_shoulder" />
-    <origin xyz="0 0.32 0.5" rpy="0 0 0" />
+    <origin xyz="0 0.32 0.8" rpy="0 0 0" />
     <axis xyz="0 1 0" />
     <limit lower="-1.57" upper="1.57" effort="50" velocity="0.8" />
     <dynamics damping="0.5" friction="0.05" />
@@ -431,7 +430,7 @@
   <joint name="right_shoulder_joint" type="revolute">
     <parent link="torso" />
     <child link="right_shoulder" />
-    <origin xyz="0 -0.32 0.5" rpy="0 0 0" />
+    <origin xyz="0 -0.32 0.8" rpy="0 0 0" />
     <axis xyz="0 1 0" />
     <limit lower="-1.57" upper="1.57" effort="50" velocity="0.8" />
     <dynamics damping="0.5" friction="0.05" />
@@ -824,7 +823,7 @@
   <joint name="camera_link_joint" type="fixed">
     <parent link="torso" />
     <child link="camera_link" />
-    <origin xyz="0.20 0 0.65" rpy="0 0 0" />
+    <origin xyz="0.20 0 0.95" rpy="0 0 0" />
   </joint>
   <link name="camera_optical_frame">
     <visual>
